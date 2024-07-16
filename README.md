@@ -20,5 +20,5 @@ zip -r typst_anki.zip __init__.py typst_input_dialog.py manifest.json ./lib_{win
 
 ## TODO 
 
-- [] **Inconsistency:** `Typst SVG` option uses display math as otherwise small margins will cut parts off while `MathJax` always uses inline math for now.
+- [ ] **Inconsistency:** `Typst SVG` option uses display math as otherwise small margins will cut parts off while `MathJax` always uses inline math for now.
     
