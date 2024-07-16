@@ -28,9 +28,9 @@ charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via flask
+colorama==0.4.6
+    # via click
 decorator==5.1.1
-    # via anki
-distro==1.9.0
     # via anki
 flask==3.0.3
     # via aqt
@@ -58,8 +58,13 @@ pip-system-certs==4.0
     # via aqt
 protobuf==5.27.2
     # via anki
+psutil==6.0.0
+    # via anki
+    # via aqt
 pysocks==1.7.1
     # via requests
+pywin32==306
+    # via aqt
 referencing==0.35.1
     # via jsonschema
     # via jsonschema-specifications
