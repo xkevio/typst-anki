@@ -61,6 +61,8 @@ protobuf==5.27.2
 psutil==6.0.0
     # via anki
     # via aqt
+pypandoc==1.13
+    # via typst-anki
 pysocks==1.7.1
     # via requests
 pywin32==306
