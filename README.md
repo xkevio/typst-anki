@@ -7,16 +7,18 @@ Convert `typst` math code to `MathJax` (via pandoc) or `SVG`s (via the typst com
 
 ## Installation
 
-```sh 
+```sh
 git clone git@github.com:xkevio/typst-anki.git
 cd typst-anki/src/typst_anki
 
-mkdir lib_{win, linux} # <- depending on your system!
-pip download typst -d ./lib_{win, linux}/ # <- unpack the .whl file!
-pip download pypandoc -d ./lib_{win, linux}/ # <- unpack the .whl file!
+mkdir lib # <- this stores external dependencies for Anki.
+pip install typst -t ./lib/
+pip install pypandoc -t ./lib/
 
-zip -r typst_anki.zip __init__.py typst_input_dialog.py manifest.json ./lib_{win, linux}/
+zip -r typst_anki.zip __init__.py typst_input_dialog.py manifest.json ./lib/
 ```
+
+Then, open Anki > Tools > Addons > Install from file > `typst_anki.zip`.
 
 ## TODO 
 

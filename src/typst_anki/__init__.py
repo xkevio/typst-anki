@@ -12,7 +12,7 @@ import tempfile
 from sys import platform
 
 addon_path = os.path.dirname(__file__)
-sys.path.append(os.path.join(addon_path, "lib_linux" if platform == "linux" else "lib_win"))
+sys.path.append(os.path.join(addon_path, "lib"))
 
 import typst
 import pypandoc

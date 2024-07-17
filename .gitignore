@@ -9,4 +9,4 @@ wheels/
 # venv
 .venv
 *.zip
-lib_*/
+lib/
