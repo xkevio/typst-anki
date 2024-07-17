@@ -37,7 +37,11 @@ def generate_typst_svg(typst_math: str) -> bytes:
 # Open an input dialog for typst input, convert and append to note.
 def typst_editor(editor: Editor):
     current_field_idx = editor.currentField
+   
     input_dialog = TypstInputDialog()
+    input_dialog.input.setFocus()
+    input_dialog.button.setDefault(True)
+    
     if input_dialog.exec():
         # Get front or back side and insert SVG/MathJax
         input_text, option = input_dialog.text_and_option()

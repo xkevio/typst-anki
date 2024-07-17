@@ -4,10 +4,11 @@ class TypstInputDialog(QDialog):
     def __init__(self, parent=None):
         QDialog.__init__(self, parent)
         self.setWindowTitle("Input Typst...")
+        self.resize(300, 100)
 
         self.input = QLineEdit()
         self.button = QPushButton("Convert")
-        self.button.setDefault(True)
+        self.button.setAutoDefault(False)
         self.button.clicked.connect(self.accept)
 
         self.math_jax = QRadioButton("MathJax")
@@ -27,9 +28,9 @@ class TypstInputDialog(QDialog):
         hbox_layout.addLayout(radio_layout)
         hbox_layout.addLayout(form_layout)
 
-        # Set the main layout of the dialog
+        self.input.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setLayout(hbox_layout)
-
+        
     def text_and_option(self) -> tuple[str, str]:
         input_text = self.input.text()
         selected_option = [r.text() for r in self.radio_group if r.isChecked()][0]
