@@ -1,15 +1,13 @@
 from aqt.qt import *
 from aqt.editor import Editor
 from aqt.gui_hooks import editor_did_init_buttons
-from aqt.utils import showInfo
 from .typst_input_dialog import TypstInputDialog
 
 import re
 import sys 
 import os
 import tempfile
-
-from sys import platform
+import json
 
 addon_path = os.path.dirname(__file__)
 sys.path.append(os.path.join(addon_path, "lib"))
@@ -36,8 +34,6 @@ def generate_typst_svg(typst_math: str) -> bytes:
 
 # Open an input dialog for typst input, convert and append to note.
 def typst_editor(editor: Editor):
-    current_field_idx = editor.currentField
-   
     input_dialog = TypstInputDialog()
     input_dialog.input.setFocus()
     input_dialog.button.setDefault(True)
@@ -45,20 +41,12 @@ def typst_editor(editor: Editor):
     if input_dialog.exec():
         # Get front or back side and insert SVG/MathJax
         input_text, option = input_dialog.text_and_option()
-        output_text = generate_typst_svg(input_text).decode("utf-8") if option == "Typst SVG" else convert_typst_to_mathjax(input_text) 
+        output_text = (generate_typst_svg(input_text).decode("utf-8") 
+                       if option == "Typst SVG" 
+                       else convert_typst_to_mathjax(input_text)) 
 
-        fields = editor.note.col.models.current()["flds"];
-        field_names = [f["name"] for f in fields];
-        current_field = field_names[current_field_idx]
-
-        if current_field == "Front":
-            editor.note["Front"] += output_text
-        elif current_field == "Back":
-            editor.note["Back"] += output_text
-        else:
-            showInfo("Select a text field!")
-
-        editor.setNote(editor.note)
+        editor.web.eval(f"document.execCommand('insertHTML', false, {json.dumps(output_text)});")
+        editor.saveNow(editor.loadNoteKeepingFocus)
 
 # Add and register new editor button.
 def add_typst_button(buttons, editor: Editor):

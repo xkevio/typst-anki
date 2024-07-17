@@ -19,9 +19,10 @@ zip -r typst_anki.zip __init__.py typst_input_dialog.py manifest.json ./lib/
 ```
 
 Then, open Anki > Tools > Addons > Install from file > `typst_anki.zip`.
-(Pandoc needs to be installed on your system and available via `$PATH`.)
+(Pandoc needs to be installed on your system and available via `$PATH`.) Or, if you wish, use [`just`](https://github.com/casey/just).
 
 ## TODO 
 
 - [ ] **Inconsistency:** `Typst SVG` option uses display math as otherwise small margins will cut parts off while `MathJax` always uses inline math for now.
+- [ ] **Feature:** Use Typst HTML export when it releases. 
     
