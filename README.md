@@ -19,6 +19,7 @@ zip -r typst_anki.zip __init__.py typst_input_dialog.py manifest.json ./lib/
 ```
 
 Then, open Anki > Tools > Addons > Install from file > `typst_anki.zip`.
+(Pandoc needs to be installed on your system and available via `$PATH`.)
 
 ## TODO 
 
