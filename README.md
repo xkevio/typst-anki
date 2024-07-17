@@ -1,6 +1,6 @@
 # typst-anki
 
-Convert `typst` math code to `MathJax` (via pandoc) or `SVG`s (via the typst compiler) for use in Anki flashcards. Click either the `Typst` button or press <kbd>Ctrl + M, T</kbd>.
+Convert `typst` math code to `MathJax` (via pandoc) or `SVG`s (via the typst compiler) for use in Anki flashcards. Click either the `Typst` button or press <kbd>Ctrl + M, T</kbd>. Add custom functions inside [`preamble.py`](src/typst_anki/preamble.py)!
 
 > [!IMPORTANT]  
 > Use `MathJax` for consistency. The `SVG`s directly from Typst are very misaligned inside the text field.
@@ -23,6 +23,6 @@ Then, open Anki > Tools > Addons > Install from file > `typst_anki.zip`.
 
 ## TODO 
 
-- [ ] **Inconsistency:** `Typst SVG` option uses display math as otherwise small margins will cut parts off while `MathJax` always uses inline math for now.
 - [ ] **Feature:** Use Typst HTML export when it releases. 
+- [ ] **Inconsistency:** `Typst SVG` option uses display math as otherwise small margins will cut parts off while `MathJax` always uses inline math for now.
     

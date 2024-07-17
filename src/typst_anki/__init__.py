@@ -9,6 +9,8 @@ import os
 import tempfile
 import json
 
+from .preamble import PREAMBLE
+
 addon_path = os.path.dirname(__file__)
 sys.path.append(os.path.join(addon_path, "lib"))
 
@@ -17,14 +19,13 @@ import pypandoc
 
 # Convert Typst Math to MathJax via Pandoc.
 def convert_typst_to_mathjax(typst_math: str) -> str:
-    mathjax_output = pypandoc.convert_text(f"${typst_math}$", "html", "typst", extra_args=["--mathjax"])
+    mathjax_output = pypandoc.convert_text(f"{PREAMBLE}\n${typst_math}$", "html", "typst", extra_args=["--mathjax"])
     return re.sub("<\/?p>", "", mathjax_output)
 
 # Convert Typst Math to SVG via the Typst compiler.
 def generate_typst_svg(typst_math: str) -> bytes:
     # Pre-amble for inline typst math
-    preamble = "#set page(width: auto, height: auto, margin: (x: 0em, y: 0.25em))\n#set text(white)"
-    final_code = preamble + "\n" + f"$ {typst_math} $" 
+    final_code = PREAMBLE + "\n" + f"$ {typst_math} $" 
     
     # Create temp file for typst code
     with tempfile.NamedTemporaryFile(mode = "w", suffix = ".typ") as tmp:
