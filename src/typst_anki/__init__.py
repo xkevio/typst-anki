@@ -33,6 +33,26 @@ def generate_typst_svg(typst_math: str) -> bytes:
         tmp.flush()
         return typst.compile(tmp.name, format = "svg")
 
+# Alternative option: write inline math between dollar signs, extract and replace.
+def collect_and_replace(editor: Editor):
+    current_field_idx = editor.currentField
+    
+    fields = editor.note.col.models.current()["flds"];
+    field_names = [f["name"] for f in fields];
+    current_field = field_names[current_field_idx]
+
+    new_front = re.sub("\$(.*?)\$", lambda match: convert_typst_to_mathjax(match.group(1)), editor.note["Front"])
+    new_back = re.sub("\$(.*?)\$", lambda match: convert_typst_to_mathjax(match.group(1)), editor.note["Back"])
+
+    if current_field == "Front":
+        editor.note["Front"] = new_front
+    elif current_field == "Back":
+        editor.note["Back"] = new_back
+    else:
+        showInfo("Select a text field!")
+
+    editor.setNote(editor.note)
+
 # Open an input dialog for typst input, convert and append to note.
 def typst_editor(editor: Editor):
     input_dialog = TypstInputDialog()
@@ -60,7 +80,16 @@ def add_typst_button(buttons, editor: Editor):
         keys = "Ctrl+M, T"
     )
 
-    buttons.append(typst_button)
+    typst_r_button = editor.addButton(
+        icon = None,
+        cmd = "typst_r_button",
+        func = collect_and_replace,
+        tip = "Replace and Insert Typst Math",
+        label = "Typst Replace",
+        keys = "Ctrl+M, R"
+    )
+
+    buttons.extend([typst_button, typst_r_button])
     return buttons
     
 editor_did_init_buttons.append(add_typst_button)
