@@ -25,4 +25,5 @@ Then, open Anki > Tools > Addons > Install from file > `typst_anki.zip`.
 
 - [ ] **Feature:** Use Typst HTML export when it releases. 
 - [ ] **Inconsistency:** `Typst SVG` option uses display math as otherwise small margins will cut parts off while `MathJax` always uses inline math for now.
+- [ ] **Issue (?):** It seems to prepend the output on some Linux systems, perhaps because the web engine behind `QWebEngineView` differs.
     
