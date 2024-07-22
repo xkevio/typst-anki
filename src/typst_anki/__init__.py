@@ -8,8 +8,10 @@ import sys
 import os
 import tempfile
 import json
+import time
 
 from .preamble import PREAMBLE
+from .anki_version_detection import anki_point_version
 
 addon_path = os.path.dirname(__file__)
 sys.path.append(os.path.join(addon_path, "lib"))
@@ -66,8 +68,12 @@ def typst_editor(editor: Editor):
                        if option == "Typst SVG" 
                        else convert_typst_to_mathjax(input_text)) 
 
-        editor.web.eval(f"document.execCommand('insertHTML', false, {json.dumps(output_text)});")
-        editor.saveNow(editor.loadNoteKeepingFocus)
+        # see: https://github.com/ijgnd/anki__editor_add_table/commit/f236029d43ae8f65fa93a684ba13ea1bdfe64852
+        js_insert_html = (f"document.execCommand('insertHTML', false, {json.dumps(output_text)});"
+                          if anki_point_version <= 49
+                          else f"setTimeout(function() {{ document.execCommand('insertHTML', false, {json.dumps(output_text)}); }}, 20);")
+
+        editor.web.evalWithCallback(js_insert_html, editor.saveNow(editor.loadNoteKeepingFocus))
 
 # Add and register new editor button.
 def add_typst_button(buttons, editor: Editor):
