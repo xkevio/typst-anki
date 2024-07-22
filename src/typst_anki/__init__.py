@@ -8,7 +8,6 @@ import sys
 import os
 import tempfile
 import json
-import time
 
 from .preamble import PREAMBLE
 from .anki_version_detection import anki_point_version
