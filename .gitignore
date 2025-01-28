@@ -10,3 +10,4 @@ wheels/
 .venv
 *.zip
 lib/
+.DS_Store

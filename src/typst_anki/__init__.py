@@ -2,6 +2,7 @@ from aqt.qt import *
 from aqt.editor import Editor
 from aqt.gui_hooks import editor_did_init_buttons
 from .typst_input_dialog import TypstInputDialog
+from sys import platform
 
 import re
 import sys 
@@ -14,6 +15,10 @@ from .anki_version_detection import anki_point_version
 
 addon_path = os.path.dirname(__file__)
 sys.path.append(os.path.join(addon_path, "lib"))
+
+# FIXME: Workaround as I cannot get MacOS to find any kind of pandoc otherwise.
+if platform == "darwin":
+    os.environ.setdefault('PYPANDOC_PANDOC', '/usr/local/bin/pandoc')
 
 import typst
 import pypandoc
@@ -63,14 +68,14 @@ def typst_editor(editor: Editor):
     if input_dialog.exec():
         # Get front or back side and insert SVG/MathJax
         input_text, option = input_dialog.text_and_option()
-        output_text = (generate_typst_svg(input_text).decode("utf-8") 
+        output_text = (generate_typst_svg(input_text).decode("utf-8").replace("<svg", "<svg style=\"vertical-align: middle\"") 
                        if option == "Typst SVG" 
                        else convert_typst_to_mathjax(input_text)) 
 
         # see: https://github.com/ijgnd/anki__editor_add_table/commit/f236029d43ae8f65fa93a684ba13ea1bdfe64852
         js_insert_html = (f"document.execCommand('insertHTML', false, {json.dumps(output_text)});"
                           if anki_point_version <= 49
-                          else f"setTimeout(function() {{ document.execCommand('insertHTML', false, {json.dumps(output_text)}); }}, 20);")
+                          else f"setTimeout(function() {{ document.execCommand('insertHTML', false, {json.dumps(output_text)}); }}, 50);")
 
         editor.web.evalWithCallback(js_insert_html, editor.saveNow(editor.loadNoteKeepingFocus))
 
