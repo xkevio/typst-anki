@@ -1,4 +1,4 @@
-PREAMBLE = """#set page(width: auto, height: auto, margin: (x: 0em, y: 0em), fill: none)
+PREAMBLE = """#set page(width: auto, height: auto, margin: 0cm, fill: none)
 #set text(white, 14pt)
 
 #let vbr(x) = $bold(upright(#x))$
