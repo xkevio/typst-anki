@@ -1,6 +1,6 @@
 # typst-anki
 
-Convert `typst` math code to `MathJax` (via pandoc) or `SVG`s (via the typst compiler) for use in Anki flashcards. Click either the `Typst` button or press <kbd>Ctrl + M, T</kbd>. Add custom functions inside [`preamble.py`](src/typst_anki/preamble.py)!
+Convert `typst` math code to `MathJax` (via pandoc) or `SVG`s (via the typst compiler) for use in Anki flashcards. Click either the `Typst` button or press <kbd>Ctrl + M, T</kbd>. Alternatively, click `Typst Replace` or press <kbd>Ctrl + M, R</kbd> to replace all instances of typst math code between `$...$` with rendered `MathJax`. Add custom functions inside [`preamble.py`](src/typst_anki/preamble.py)!
 
 > [!IMPORTANT]  
 > On MacOS, make sure `pandoc` is available under `/usr/local/bin/pandoc` otherwise Anki cannot find it.
