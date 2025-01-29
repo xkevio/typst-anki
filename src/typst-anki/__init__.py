@@ -20,7 +20,7 @@ sys.path.append(os.path.join(addon_path, "lib"))
 
 # FIXME: Workaround as I cannot get MacOS to find any kind of pandoc otherwise.
 if platform == "darwin":
-    os.environ.setdefault('PYPANDOC_PANDOC', '/usr/local/bin/pandoc')
+    os.environ.setdefault("PYPANDOC_PANDOC", "/usr/local/bin/pandoc")
 
 import typst
 import pypandoc
@@ -47,28 +47,28 @@ def generate_typst_svg(typst_math: str) -> bytes:
 def svg_to_base64_img(svg: bytes) -> str:
     """Returns an HTML img tag with the `svg` byte sequence encoded as base64 as the source."""
     svg_b64 = "data:image/svg+xml;base64," + base64.b64encode(svg).decode()
-    return f"<img style=\"vertical-align: middle;\" src=\"{svg_b64}\">"
+    return f'<img style="vertical-align: middle;" src="{svg_b64}">'
 
 # ----------------------------------------------------- #
 
 def collect_and_replace(editor: Editor):
     """Collects all text between dollar signs and converts it to MathJax in-place."""
-    current_field_idx = editor.currentField
+
+    if editor.currentField is None:
+        showInfo("Select a text field!")
+        return 
     
     fields = editor.note.col.models.current()["flds"]
     field_names = [f["name"] for f in fields]
-    current_field = field_names[current_field_idx]
+    current_field = field_names[editor.currentField]
 
-    new_front = re.sub("\$(.*?)\$", lambda match: convert_typst_to_mathjax(match.group(1)), editor.note["Front"])
-    new_back = re.sub("\$(.*?)\$", lambda match: convert_typst_to_mathjax(match.group(1)), editor.note["Back"])
+    new_note_text = re.sub(
+        "\$(.*?)\$", 
+        lambda match: convert_typst_to_mathjax(match.group(1)), 
+        editor.note[current_field]
+    )
 
-    if current_field == "Front":
-        editor.note["Front"] = new_front
-    elif current_field == "Back":
-        editor.note["Back"] = new_back
-    else:
-        showInfo("Select a text field!")
-
+    editor.note[current_field] = new_note_text
     editor.setNote(editor.note)
 
 def typst_editor(editor: Editor):

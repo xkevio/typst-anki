@@ -1,4 +1,4 @@
-set windows-shell := ["powershell.exe"]
+set windows-shell := ["pwsh.exe", "-NoLogo", "-Command"] # Set to powershell v7.
 
 install:
     mkdir -p src/typst-anki/lib
