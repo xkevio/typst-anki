@@ -24,6 +24,6 @@ Then, open Anki > Tools > Addons > Install from file > `typst_anki.zip`.
 ## TODO 
 
 - [ ] **Feature:** Use Typst HTML export when it releases (MathML). 
-- [ ] **Inconsistency:** `Typst SVG` option uses display math as otherwise small margins will cut parts off while `MathJax` always uses inline math for now.
+- [ ] **Inconsistency:** `Typst SVG` option uses display math as otherwise small margins will cut parts off while `MathJax` (editor) always uses inline math for now.
 - [ ] **Issue:** On some systems, inserting MathJax will first just display the raw MathJax markup and only transform after user interaction.
     

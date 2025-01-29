@@ -9,6 +9,7 @@ import sys
 import os
 import tempfile
 import json
+import base64
 
 from .preamble import PREAMBLE
 from .anki_version_detection import anki_point_version
@@ -22,6 +23,8 @@ if platform == "darwin":
 
 import typst
 import pypandoc
+
+# ----------------------------------------------------- #
 
 def convert_typst_to_mathjax(typst_math: str) -> str:
     """Returns MathJax markup by calling a pandoc process with `typst_math` as input."""
@@ -39,13 +42,20 @@ def generate_typst_svg(typst_math: str) -> bytes:
         tmp.write(final_code)
         tmp.flush()
         return typst.compile(tmp.name, format = "svg")
+    
+def svg_to_base64_img(svg: bytes) -> str:
+    """Returns an HTML img tag with the `svg` byte sequence encoded as base64 as the source."""
+    svg_b64 = "data:image/svg+xml;base64," + base64.b64encode(svg).decode()
+    return f"<img style=\"vertical-align: middle;\" src=\"{svg_b64}\">"
+
+# ----------------------------------------------------- #
 
 def collect_and_replace(editor: Editor):
     """Collects all text between dollar signs and converts it to MathJax in-place."""
     current_field_idx = editor.currentField
     
-    fields = editor.note.col.models.current()["flds"];
-    field_names = [f["name"] for f in fields];
+    fields = editor.note.col.models.current()["flds"]
+    field_names = [f["name"] for f in fields]
     current_field = field_names[current_field_idx]
 
     new_front = re.sub("\$(.*?)\$", lambda match: convert_typst_to_mathjax(match.group(1)), editor.note["Front"])
@@ -77,16 +87,16 @@ def typst_editor(editor: Editor):
     if input_dialog.exec():
         input_text, option = input_dialog.text_and_option()
 
-        # Add vertical alignment to SVG style otherwise it looks off (find way to move cursor past SVG).
-        svg_string = generate_typst_svg(input_text).decode("utf-8").replace("<svg", "<svg style=\"vertical-align: middle\"")
+        # Convert SVG to base64 and enclose in <img> tag for vertical alignment and easier cursor movement.
+        svg_string = svg_to_base64_img(generate_typst_svg(input_text))
         output_text = (svg_string if option == "Typst SVG" else convert_typst_to_mathjax(input_text)) 
 
         # see: https://github.com/ijgnd/anki__editor_add_table/commit/f236029d43ae8f65fa93a684ba13ea1bdfe64852
         js_insert_html = (f"document.execCommand('insertHTML', false, {json.dumps(output_text)});"
                           if anki_point_version <= 49
-                          else f"setTimeout(function() {{ document.execCommand('insertHTML', false, {json.dumps(output_text)}); }}, 50);")
+                          else f"setTimeout(function() {{ document.execCommand('insertHTML', false, {json.dumps(output_text)}); }}, 40);")
 
-        editor.web.evalWithCallback(js_insert_html, editor.saveNow(editor.loadNoteKeepingFocus))
+        editor.web.evalWithCallback(js_insert_html, editor.saveNow(editor.loadNote))
 
 def add_typst_button(buttons, editor: Editor):
     """Returns an array of two editor buttons (Typst Editor, Typst Replace)."""
