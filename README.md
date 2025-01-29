@@ -15,7 +15,7 @@ mkdir lib # <- this stores external dependencies for Anki.
 pip install typst -t ./lib/
 pip install pypandoc -t ./lib/
 
-zip -r typst_anki.zip __init__.py typst_input_dialog.py manifest.json ./lib/
+zip -r typst_anki.zip ./*
 ```
 
 Then, open Anki > Tools > Addons > Install from file > `typst_anki.zip`.
