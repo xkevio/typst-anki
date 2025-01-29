@@ -1,7 +1,7 @@
 from aqt.qt import *
 from aqt.editor import Editor
 from aqt.gui_hooks import editor_did_init_buttons
-from .typst_input_dialog import TypstInputDialog
+from aqt.utils import showInfo
 from sys import platform
 
 import re
@@ -13,6 +13,7 @@ import base64
 
 from .preamble import PREAMBLE
 from .anki_version_detection import anki_point_version
+from .typst_input_dialog import TypstInputDialog
 
 addon_path = os.path.dirname(__file__)
 sys.path.append(os.path.join(addon_path, "lib"))
@@ -89,7 +90,7 @@ def typst_editor(editor: Editor):
 
         # Convert SVG to base64 and enclose in <img> tag for vertical alignment and easier cursor movement.
         svg_string = svg_to_base64_img(generate_typst_svg(input_text))
-        output_text = (svg_string if option == "Typst SVG" else convert_typst_to_mathjax(input_text)) 
+        output_text = svg_string if option == "Typst SVG" else convert_typst_to_mathjax(input_text)
 
         # see: https://github.com/ijgnd/anki__editor_add_table/commit/f236029d43ae8f65fa93a684ba13ea1bdfe64852
         js_insert_html = (f"document.execCommand('insertHTML', false, {json.dumps(output_text)});"

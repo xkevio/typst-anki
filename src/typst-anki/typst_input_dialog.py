@@ -7,6 +7,7 @@ class TypstInputDialog(QDialog):
         self.resize(300, 100)
 
         self.input = QLineEdit()
+        self.input.setMinimumWidth(100)
         self.button = QPushButton("Convert")
         self.button.setAutoDefault(False)
         self.button.clicked.connect(self.accept)

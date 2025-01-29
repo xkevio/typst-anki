@@ -369,6 +369,58 @@ wheels = [
 ]
 
 [[package]]
+name = "pyqt6"
+version = "6.8.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pyqt6-qt6" },
+    { name = "pyqt6-sip" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e9/0a/accbebed526158ab2aedd5c84d238159754bd99f481082b3fe7f374c6a3b/PyQt6-6.8.0.tar.gz", hash = "sha256:6d8628de4c2a050f0b74462e4c9cb97f839bf6ffabbca91711722ffb281570d9", size = 1061357 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d6/ae/30f6f40c8cdf3d5319ec7add820c6edf96d8ed2461984fd548af9e2d9b51/PyQt6-6.8.0-cp39-abi3-macosx_10_14_universal2.whl", hash = "sha256:8c5c05f5fdff31a5887dbc29b27615b09df467631238d7b449283809ffca6228", size = 12104917 },
+    { url = "https://files.pythonhosted.org/packages/06/07/08229a8ae164a0538b2c1ab16c47d39979eb306feab641280194b3d7938b/PyQt6-6.8.0-cp39-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:3a4354816f11e812b727206a9ea6e79ff3774f1bb7228ad4b9318442d2c64ff9", size = 8165074 },
+    { url = "https://files.pythonhosted.org/packages/b4/7a/a3ecac3327345dde8f34e781d6db1339e4e3b8411ac8ae9747822a0d44e9/PyQt6-6.8.0-cp39-abi3-manylinux_2_35_x86_64.whl", hash = "sha256:452bae5840077bf0f146c798d7777f70d7bdd0c7dcfa9ee7a415c1daf2d10038", size = 8322144 },
+    { url = "https://files.pythonhosted.org/packages/d0/52/1e60e38d216c232af83ac16bedf1ece419812368220485fc25af80c7a5d7/PyQt6-6.8.0-cp39-abi3-manylinux_2_39_aarch64.whl", hash = "sha256:cf7123caea14e7ecf10bd12cae48e8d9970ef7caf627bc7d7988b0baa209adb3", size = 8101586 },
+    { url = "https://files.pythonhosted.org/packages/eb/73/9bae1b8daedf2acff5a3668eae84783720ff513e402b0448a906ab3d5479/PyQt6-6.8.0-cp39-abi3-win_amd64.whl", hash = "sha256:a9913d479f1ffee804bf7f232079baea4fb4b221a8f4890117588917a54ea30d", size = 6661265 },
+    { url = "https://files.pythonhosted.org/packages/23/a0/f564279285ed92b4fe38ed7b2a8fcddab414512391088b6a0f67a1107f24/PyQt6-6.8.0-cp39-abi3-win_arm64.whl", hash = "sha256:48bace7b87676bba5e6114482f3a20ca20be90c7f261b5d340464313f5f2bf5e", size = 5409032 },
+]
+
+[[package]]
+name = "pyqt6-qt6"
+version = "6.8.1"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1d/19/b89eb6cecbdf1e65a44658a083693a967e9d428370026711b624e928a8ca/PyQt6_Qt6-6.8.1-1-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:2f4b8b55b1414b93f340f22e8c88d25550efcdebc4b65a3927dd947b73bd4358", size = 80877444 },
+    { url = "https://files.pythonhosted.org/packages/87/1b/94d3710ee7ef93ee99c1dac512f631de5e310f6b21e43f474ef269f840b6/PyQt6_Qt6-6.8.1-1-py3-none-manylinux_2_39_aarch64.whl", hash = "sha256:98aa99fe38ae68c5318284cd28f3479ba538c40bf6ece293980abae0925c1b24", size = 79473622 },
+    { url = "https://files.pythonhosted.org/packages/df/0a/c47a1cc272b418faff8af79b121f0cecd32b09d634253254e3a990432220/PyQt6_Qt6-6.8.1-py3-none-macosx_10_14_x86_64.whl", hash = "sha256:1eb8460a1fdb38d0b2458c2974c01d471c1e59e4eb19ea63fc447aaba3ad530e", size = 65754939 },
+    { url = "https://files.pythonhosted.org/packages/b1/e6/cc4fbc97a7d0955185e33add3ce00480f0023424d17ac6f864a504f60251/PyQt6_Qt6-6.8.1-py3-none-macosx_11_0_arm64.whl", hash = "sha256:9f3790c4ce4dc576e48b8718d55fb8743057e6cbd53a6ca1dd253ffbac9b7287", size = 59956028 },
+    { url = "https://files.pythonhosted.org/packages/01/22/c2997fe76d765d9ba960e9a099238cb419a316362bdde50fedacc23e7c7d/PyQt6_Qt6-6.8.1-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:d6ca5d2b9d2ec0ee4a814b2175f641a5c4299cb80b45e0f5f8356632663f89b3", size = 72561636 },
+    { url = "https://files.pythonhosted.org/packages/a1/24/907c7451901e56e5b713d70c6f65191d80a3a3caac1095fea7f2a4b0b25b/PyQt6_Qt6-6.8.1-py3-none-manylinux_2_35_x86_64.whl", hash = "sha256:08065d595f1e6fc2dde9f4450eeff89082f4bad26f600a8e9b9cc5966716bfcf", size = 72573711 },
+    { url = "https://files.pythonhosted.org/packages/2b/a8/d942bb9f83ad4abd4c296cd4bbf752d1147eaa14523cc132a2b8511a3960/PyQt6_Qt6-6.8.1-py3-none-manylinux_2_39_aarch64.whl", hash = "sha256:20843cb86bd94942d1cd99e39bf1aeabb875b241a35a8ab273e4bbbfa63776db", size = 71077917 },
+    { url = "https://files.pythonhosted.org/packages/ab/2c/0d45a74ea8eedf5a2a5a2628396fb2e26107ae07f6c73d6d22c7fa3d4403/PyQt6_Qt6-6.8.1-py3-none-win_amd64.whl", hash = "sha256:006d786693d0511fbcf184a862edbd339c6ed1bb3bd9de363d73a19ed4b23dff", size = 71647964 },
+    { url = "https://files.pythonhosted.org/packages/c9/0d/b86b64f0ac5e08b1bd18edac9e949897a4626196725e9a86af4e9f628c80/PyQt6_Qt6-6.8.1-py3-none-win_arm64.whl", hash = "sha256:a8bc2ed4ee5e7c6ff4dd1c7db0b27705d151fee5dc232bbd1bf17618f937f515", size = 47836492 },
+]
+
+[[package]]
+name = "pyqt6-sip"
+version = "13.9.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/2a/e4/f39ca1fd6de7d4823d964a3ec33e85b6f51a9c2a7a1e95956b7a92c8acc9/pyqt6_sip-13.9.1.tar.gz", hash = "sha256:15be741d1ae8c82bb7afe9a61f3cf8c50457f7d61229a1c39c24cd6e8f4d86dc", size = 92358 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/34/19/6df209c4f1a3fbae0a90c8f37b0205ce42d61d8d762e4a539fceeabee340/PyQt6_sip-13.9.1-cp312-cp312-macosx_10_9_universal2.whl", hash = "sha256:1fb405615970e85b622b13b4cad140ff1e4182eb8334a0b27a4698e6217b89b0", size = 112248 },
+    { url = "https://files.pythonhosted.org/packages/6b/81/9df86e90a8dd1f6f5faa1199af03e208f5dd3193e462e541e276001d098c/PyQt6_sip-13.9.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c800db3464481e87b1d2b84523b075df1e8fc7856c6f9623dc243f89be1cb604", size = 322310 },
+    { url = "https://files.pythonhosted.org/packages/dd/4d/e263f045c97c2398fbd762d07295140b628a611da5f37744324080a86a1d/PyQt6_sip-13.9.1-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:c1942e107b0243ced9e510d507e0f27aeea9d6b13e0a1b7c06fd52a62e0d41f7", size = 303638 },
+    { url = "https://files.pythonhosted.org/packages/28/9f/047a3b28265b39ff151981da84fde7895b87b94131db4b044a6125df9a4a/PyQt6_sip-13.9.1-cp312-cp312-win_amd64.whl", hash = "sha256:552ff8fdc41f5769d3eccc661f022ed496f55f6e0a214c20aaf56e56385d61b6", size = 53498 },
+    { url = "https://files.pythonhosted.org/packages/92/af/17a92b67db31a086bd693bf97d98aa2f45427e7982df53f59cdc26899979/PyQt6_sip-13.9.1-cp312-cp312-win_arm64.whl", hash = "sha256:976c7758f668806d4df7a8853f390ac123d5d1f73591ed368bdb8963574ff589", size = 45335 },
+    { url = "https://files.pythonhosted.org/packages/4b/10/43eab7a9cd26f3ba81220f2ec7a7c471c232df738dd5787affcc00d75aa9/PyQt6_sip-13.9.1-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:56ce0afb19cd8a8c63ff93ae506dffb74f844b88adaa6673ebc0dec43af48a76", size = 112278 },
+    { url = "https://files.pythonhosted.org/packages/31/ba/b0cb5ad4d44265213d50b8e7b24a9c1605baf242019e51104dd87499d68f/PyQt6_sip-13.9.1-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:5d7726556d1ca7a7ed78e19ba53285b64a2a8f6ad7ff4cb18a1832efca1a3102", size = 322531 },
+    { url = "https://files.pythonhosted.org/packages/ba/73/556391d6115e87972d8c88b757b4db614af4fb8579ce28030965fe793fe7/PyQt6_sip-13.9.1-cp313-cp313-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:14f95c6352e3b85dc26bf59cfbf77a470ecbd5fcdcf00af4b648f0e1b9eefb9e", size = 303760 },
+    { url = "https://files.pythonhosted.org/packages/d8/5b/7321bb2564673bc4facfed338553bc42542f2ae05cbea1c8b57a596ab28d/PyQt6_sip-13.9.1-cp313-cp313-win_amd64.whl", hash = "sha256:3c269052c770c09b61fce2f2f9ea934a67dfc65f443d59629b4ccc8f89751890", size = 53509 },
+    { url = "https://files.pythonhosted.org/packages/cf/b6/eabe1d0fdcc56c80325c5a2cc361ae3e57b3346cb7700b707481d3977a24/PyQt6_sip-13.9.1-cp313-cp313-win_arm64.whl", hash = "sha256:8b2ac36d6e04db6099614b9c1178a2f87788c7ffc3826571fb63d36ddb4c401d", size = 45358 },
+]
+
+[[package]]
 name = "pysocks"
 version = "1.7.1"
 source = { registry = "https://pypi.org/simple" }
@@ -554,6 +606,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "aqt" },
     { name = "pypandoc" },
+    { name = "pyqt6" },
     { name = "ruff" },
     { name = "typst" },
 ]
@@ -562,6 +615,7 @@ dependencies = [
 requires-dist = [
     { name = "aqt", specifier = ">=24.11" },
     { name = "pypandoc", specifier = ">=1.15" },
+    { name = "pyqt6", specifier = ">=6.8.0" },
     { name = "ruff", specifier = ">=0.9.3" },
     { name = "typst", specifier = ">=0.12.3" },
 ]
