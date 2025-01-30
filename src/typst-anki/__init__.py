@@ -92,10 +92,14 @@ def typst_editor(editor: Editor):
         svg_string = svg_to_base64_img(generate_typst_svg(input_text))
         output_text = svg_string if option == "Typst SVG" else convert_typst_to_mathjax(input_text)
 
-        # see: https://github.com/ijgnd/anki__editor_add_table/commit/f236029d43ae8f65fa93a684ba13ea1bdfe64852
+        # see: https://github.com/ijgnd/anki__editor_add_table/commit/f236029d43ae8f65fa93a684ba13ea1bdfe64852.
+        # FIXME: Regain focus after blurring note field (blurring renders MathJax)!
         js_insert_html = (f"document.execCommand('insertHTML', false, {json.dumps(output_text)});"
                           if anki_point_version <= 49
-                          else f"setTimeout(function() {{ document.execCommand('insertHTML', false, {json.dumps(output_text)}); }}, 40);")
+                          else f"""
+                            setTimeout(() => {{ document.execCommand('insertHTML', false, {json.dumps(output_text)}); }}, 20);
+                            {"setTimeout(() => {{ var field = document.activeElement; field.blur(); field.focus(); }}, 30);" if option != "Typst SVG" else ""}
+                            """)
 
         editor.web.evalWithCallback(js_insert_html, editor.saveNow(editor.loadNote))
 
