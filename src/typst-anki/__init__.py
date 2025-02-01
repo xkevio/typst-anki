@@ -1,6 +1,7 @@
+from typing import Any, cast
 from aqt.qt import *
 from aqt.editor import Editor
-from aqt.gui_hooks import editor_did_init_buttons
+from aqt.gui_hooks import editor_did_init_buttons, webview_did_receive_js_message
 from aqt.utils import showInfo
 from sys import platform
 
@@ -30,7 +31,7 @@ import pypandoc
 def convert_typst_to_mathjax(typst_math: str) -> str:
     """Returns MathJax markup by calling a pandoc process with `typst_math` as input."""
     mathjax_output = pypandoc.convert_text(f"{PREAMBLE}\n${typst_math}$", "html", "typst", extra_args=["--mathjax"])
-    return re.sub("<\/?p>", "", mathjax_output)
+    return re.sub("<\/?p>", "", mathjax_output).removeprefix('<span class="math inline">').removesuffix("</span>")
 
 def generate_typst_svg(typst_math: str) -> bytes:
     """Returns a sequence of bytes representing an SVG string obtained from compiling `typst_math` to SVG."""
@@ -71,6 +72,16 @@ def collect_and_replace(editor: Editor):
     editor.note[current_field] = new_note_text
     editor.setNote(editor.note)
 
+def reload_note(handled: tuple[bool, Any], cmd: str, ctx: Any) -> tuple[bool, Any]:
+    """Reload note callback for saving unsaved edits and loading note via `pycmd()`."""
+    if cmd != "reload_note" or not isinstance(ctx, Editor):
+        return handled 
+    
+    editor = cast(Editor, ctx)
+    editor.saveNow(editor.loadNoteKeepingFocus)
+
+    return (True, None)
+
 def typst_editor(editor: Editor):
     """Open an input dialog for typst input, convert and append to note.
 
@@ -93,18 +104,18 @@ def typst_editor(editor: Editor):
         output_text = svg_string if option == "Typst SVG" else convert_typst_to_mathjax(input_text)
 
         # see: https://github.com/ijgnd/anki__editor_add_table/commit/f236029d43ae8f65fa93a684ba13ea1bdfe64852.
-        # FIXME: Regain focus after blurring note field (blurring renders MathJax)!
         js_insert_html = (f"document.execCommand('insertHTML', false, {json.dumps(output_text)});"
                           if anki_point_version <= 49
                           else f"""
                             setTimeout(() => {{ document.execCommand('insertHTML', false, {json.dumps(output_text)}); }}, 20);
-                            {"setTimeout(() => {{ var field = document.activeElement; field.blur(); field.focus(); }}, 30);" if option != "Typst SVG" else ""}
+                            { 'setTimeout(() => pycmd("reload_note"), 40);' if option != "Typst SVG" else "" }
                             """)
 
-        editor.web.evalWithCallback(js_insert_html, editor.saveNow(editor.loadNote))
+        editor.web.eval(js_insert_html)
 
 def add_typst_button(buttons, editor: Editor):
     """Returns an array of two editor buttons (Typst Editor, Typst Replace)."""
+
     typst_button = editor.addButton(
         icon = None,
         cmd = "typst_button",
@@ -124,6 +135,7 @@ def add_typst_button(buttons, editor: Editor):
     )
 
     buttons.extend([typst_button, typst_r_button])
-    return buttons
     
+
 editor_did_init_buttons.append(add_typst_button)
+webview_did_receive_js_message.append(reload_note)
