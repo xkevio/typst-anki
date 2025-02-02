@@ -1,3 +1,4 @@
+from aqt import mw
 from aqt.qt import *
 
 class TypstInputDialog(QDialog):
@@ -6,15 +7,21 @@ class TypstInputDialog(QDialog):
         self.setWindowTitle("Input Typst...")
         self.resize(300, 100)
 
+        config = mw.addonManager.getConfig(__name__)
+
         self.input = QLineEdit()
-        self.input.setMinimumWidth(100)
         self.button = QPushButton("Convert")
         self.button.setAutoDefault(False)
         self.button.clicked.connect(self.accept)
 
         self.math_jax = QRadioButton("MathJax")
         self.typst_svg = QRadioButton("Typst SVG")
-        self.math_jax.setChecked(True)
+
+        if config["render-type"] == "mathjax":
+            self.math_jax.setChecked(True)
+        else:
+            self.typst_svg.setChecked(True)
+
         self.radio_group = [self.math_jax, self.typst_svg]
 
         radio_layout = QVBoxLayout()

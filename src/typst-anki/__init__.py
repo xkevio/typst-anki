@@ -27,12 +27,13 @@ if platform == "darwin":
 import typst
 import pypandoc
 
-# ----------------------------------------------------- #
+
+# ----- Conversion utility: Typst -> MathJax, Typst -> SVG, SVG -> Base64. ----- #
 
 def convert_typst_to_mathjax(typst_math: str) -> str:
     """Returns MathJax markup by calling a pandoc process with `typst_math` as input."""
     mathjax_output = pypandoc.convert_text(f"{PREAMBLE}\n${typst_math}$", "html", "typst", extra_args=["--mathjax"])
-    return re.sub("<\/?p>", "", mathjax_output).removeprefix('<span class="math inline">').removesuffix("</span>")
+    return re.sub("<\/?p>", "", mathjax_output)
 
 def generate_typst_svg(typst_math: str) -> bytes:
     """Returns a sequence of bytes representing an SVG string obtained from compiling `typst_math` to SVG."""
@@ -51,7 +52,8 @@ def svg_to_base64_img(svg: bytes) -> str:
     svg_b64 = "data:image/svg+xml;base64," + base64.b64encode(svg).decode()
     return f'<img style="vertical-align: middle;" src="{svg_b64}">'
 
-# ----------------------------------------------------- #
+
+# ----- Replace functionality, editor input and callback definition for the context menu. ----- #
 
 def collect_and_replace(editor: Editor):
     """Collects all text between dollar signs and converts it to MathJax in-place."""
@@ -72,16 +74,6 @@ def collect_and_replace(editor: Editor):
 
     editor.note[current_field] = new_note_text
     editor.setNote(editor.note)
-
-def reload_note(handled: tuple[bool, Any], cmd: str, ctx: Any) -> tuple[bool, Any]:
-    """Reload note callback for saving unsaved edits and loading note via `pycmd()`."""
-    if cmd != "reload_note" or not isinstance(ctx, Editor):
-        return handled 
-    
-    editor = cast(Editor, ctx)
-    editor.saveNow(editor.loadNoteKeepingFocus)
-
-    return (True, None)
 
 def typst_editor(editor: Editor):
     """Open an input dialog for typst input, convert and append to note.
@@ -127,15 +119,12 @@ def typst_menu_cb(editor: Editor):
     menu = QMenu(editor.mw)
     menu.setContentsMargins(5, 5, 5, 5)
 
-    # TODO: makre sure this inherits previous styling correctly.
-    menu.setStyleSheet("QMenu::item { spacing: 5px; margin: 5px; padding: 5px; } QMenu::item:selected { background-color: #657e9a; }")
-
     menu_and_action = [
         ("Typst Math inline", "Ctrl+M, T", partial(typst_editor, editor)),
         ("Typst Math block", "Ctrl+M, B", partial(typst_editor, editor)),
         ("Typst Math replace", "Ctrl+M, R", partial(collect_and_replace, editor)),
         ("---", None, None),
-        ("Settings...", "Ctrl+M, S", None)
+        ("Settings...", None, None)
     ]
 
     for action, shortcut, cmd in menu_and_action:
@@ -144,7 +133,6 @@ def typst_menu_cb(editor: Editor):
         else:
             act = QAction(action, menu)
             act.setShortcutVisibleInContextMenu(True)
-            # todo: act.setToolTip("a")
             
             if not shortcut is None:
                 act.setShortcut(shortcut)
@@ -157,41 +145,38 @@ def typst_menu_cb(editor: Editor):
     pos = QCursor.pos()
     menu.exec(pos)
 
+
+# ----- Registration of GUI hooks for proper note reloading, shortcuts and buttons. ----- #
+
+def reload_note(handled: tuple[bool, Any], cmd: str, ctx: Any) -> tuple[bool, Any]:
+    """Reload note callback for saving unsaved edits and loading note via `pycmd()`."""
+    
+    if cmd != "reload_note" or not isinstance(ctx, Editor):
+        return handled 
+    
+    editor = cast(Editor, ctx)
+    editor.saveNow(editor.loadNoteKeepingFocus)
+
+    return (True, None)
+
 def init_shortcuts(keys: list[tuple], editor: Editor):
+    """Initialize and add shortcuts to global shortcut hook."""
+
     keys.extend([
         ("Ctrl+M, T", partial(typst_editor, editor)),
         ("Ctrl+M, B", partial(typst_editor, editor)),
         ("Ctrl+M, R", partial(collect_and_replace, editor)),
-        # ("Ctrl+M, S", ...),
     ])
 
 def add_typst_button(buttons, editor: Editor):
-    """Returns an array of two editor buttons (Typst Editor, Typst Replace)."""
-    
-    # typst_button = editor.addButton(
-    #     icon = None,
-    #     cmd = "typst_button",
-    #     func = typst_editor,
-    #     tip = "Open Typst Math Editor",
-    #     label = "Typst",
-    #     keys = "Ctrl+M, T"
-    # )
-
-    # typst_r_button = editor.addButton(
-    #     icon = None,
-    #     cmd = "typst_r_button",
-    #     func = collect_and_replace,
-    #     tip = "Replace and Insert Typst Math",
-    #     label = "Typst Replace",
-    #     keys = "Ctrl+M, R"
-    # )
+    """Appends the `typst` button opening a context menu with all the options."""
 
     typst_menu = editor.addButton(
         icon = None,
         cmd = "typst_menu",
         func = typst_menu_cb,
         tip = "Equations (Typst)",
-        label = "𝕋",
+        label = "𝕋ypst",
     )
 
     buttons.append(typst_menu)
