@@ -66,6 +66,7 @@ def collect_and_replace(editor: Editor):
     field_names = [f["name"] for f in fields]
     current_field = field_names[editor.currentField]
 
+    # TODO: check config for render-type and whether its block or inline math (for center-aligning the SVG)!
     new_note_text = re.sub(
         "\$(.*?)\$", 
         lambda match: convert_typst_to_mathjax(match.group(1)), 
@@ -124,7 +125,7 @@ def typst_menu_cb(editor: Editor):
         ("Typst Math block", "Ctrl+M, B", partial(typst_editor, editor)),
         ("Typst Math replace", "Ctrl+M, R", partial(collect_and_replace, editor)),
         ("---", None, None),
-        ("Settings...", None, None)
+        ("Edit preamble...", None, None)
     ]
 
     for action, shortcut, cmd in menu_and_action:
