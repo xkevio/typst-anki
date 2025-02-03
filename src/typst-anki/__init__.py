@@ -76,7 +76,7 @@ def collect_and_replace(editor: Editor):
     editor.note[current_field] = new_note_text
     editor.setNote(editor.note)
 
-def typst_editor(editor: Editor):
+def typst_editor(editor: Editor, display_math=False):
     """Open an input dialog for typst input, convert and append to note.
 
     - If the option checkbox is set to MathJax, a pandoc process is called to convert typst math.
@@ -85,7 +85,7 @@ def typst_editor(editor: Editor):
     Calls `evalWithCallback` to append MathJax/SVG with `insertHTML` via Javascript.
     """
 
-    input_dialog = TypstInputDialog()
+    input_dialog = TypstInputDialog(display_math=display_math)
     input_dialog.input.setFocus()
     input_dialog.button.setDefault(True)
     
@@ -122,7 +122,7 @@ def typst_menu_cb(editor: Editor):
 
     menu_and_action = [
         ("Typst Math inline", "Ctrl+M, T", partial(typst_editor, editor)),
-        ("Typst Math block", "Ctrl+M, B", partial(typst_editor, editor)),
+        ("Typst Math block", "Ctrl+M, B", partial(typst_editor, editor, True)),
         ("Typst Math replace", "Ctrl+M, R", partial(collect_and_replace, editor)),
         ("---", None, None),
         ("Edit preamble...", None, None)
@@ -165,7 +165,7 @@ def init_shortcuts(keys: list[tuple], editor: Editor):
 
     keys.extend([
         ("Ctrl+M, T", partial(typst_editor, editor)),
-        ("Ctrl+M, B", partial(typst_editor, editor)),
+        ("Ctrl+M, B", partial(typst_editor, editor, True)),
         ("Ctrl+M, R", partial(collect_and_replace, editor)),
     ])
 
