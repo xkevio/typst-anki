@@ -95,7 +95,7 @@ def typst_editor(editor: Editor, display_math=False):
 
         # Convert SVG to base64 and enclose in <img> tag for vertical alignment and easier cursor movement.
         svg_string = svg_to_base64_img(generate_typst_svg(input_text))
-        output_text = svg_string if option == "Typst SVG" else convert_typst_to_mathjax(input_text)
+        output_text = svg_string if option.startswith("Typst SVG") else convert_typst_to_mathjax(input_text)
 
         # see: https://github.com/ijgnd/anki__editor_add_table/commit/f236029d43ae8f65fa93a684ba13ea1bdfe64852.
         js_insert_html = (f"document.execCommand('insertHTML', false, {json.dumps(output_text)});"
@@ -114,7 +114,7 @@ def typst_menu_cb(editor: Editor):
     - Typst Math inline (opens the editor and uses inline math),
     - Typst Math block (opens the editor and uses display math),
     - Typst Math replace (replaces all instances of typst math between dollar signs with rendered math),
-    - Settings (opens a settings menu for modifying the preamble and changing between SVG and MathJax)
+    - Edit preamble (opens a settings menu for modifying the preamble)
     """
 
     menu = QMenu(editor.mw)
@@ -125,7 +125,7 @@ def typst_menu_cb(editor: Editor):
         ("Typst Math block", "Ctrl+M, B", partial(typst_editor, editor, True)),
         ("Typst Math replace", "Ctrl+M, R", partial(collect_and_replace, editor)),
         ("---", None, None),
-        ("Edit preamble...", None, None)
+        ("Edit preamble...", QKeySequence(), None)
     ]
 
     for action, shortcut, cmd in menu_and_action:
@@ -134,9 +134,7 @@ def typst_menu_cb(editor: Editor):
         else:
             act = QAction(action, menu)
             act.setShortcutVisibleInContextMenu(True)
-            
-            if not shortcut is None:
-                act.setShortcut(shortcut)
+            act.setShortcut(shortcut)
 
             if not cmd is None:
                 act.triggered.connect(cmd)
