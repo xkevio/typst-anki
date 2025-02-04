@@ -6,4 +6,4 @@
 
 ### `"preamble"`: `"user_files/preamble.typ"` (default)
 
-- The path to a custom preamble typst file for specifying custom functions, page dimensions or text size and color. Default is inside the `user_files` folder in the root folder of this add-on. (TODO!)
+- The path to a custom preamble typst file for specifying custom functions, page dimensions or text size and color. Default is inside the `user_files` folder in the root folder of this add-on.

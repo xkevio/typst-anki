@@ -4,9 +4,11 @@ from aqt.qt import *
 from aqt.editor import Editor
 from aqt.gui_hooks import editor_did_init_buttons, webview_did_receive_js_message, editor_did_init_shortcuts
 from aqt.utils import showInfo
+
 from sys import platform
 from enum import Enum
 from functools import partial
+from pathlib import Path
 
 import re
 import sys 
@@ -15,9 +17,9 @@ import tempfile
 import json
 import base64
 
-from .preamble import PREAMBLE
 from .anki_version_detection import anki_point_version
 from .typst_input_dialog import TypstInputDialog
+from .preamble_edit_dialog import PreambleEditDialog
 
 addon_path = os.path.dirname(__file__)
 sys.path.append(os.path.join(addon_path, "lib"))
@@ -30,6 +32,7 @@ import typst
 import pypandoc
 
 config = mw.addonManager.getConfig(__name__)
+preamble = Path(os.path.join(os.path.dirname(__file__), config["preamble"])).read_text()
 
 
 # ----- Conversion utility: Typst -> MathJax, Typst -> SVG, SVG -> Base64. ----- #
@@ -39,26 +42,28 @@ class Export(Enum):
     SVG = 2
 
 def generate_typst(typst_math: str, render_type: Export, display_math: bool) -> str:
-    output = ""
+    """Top-level function for generating the typst math rendering from the input string.
+    
+    Calls either the MathJax conversion or the SVG compilation depending on `render_type`.
+    """
 
-    if render_type == Export.MATHJAX:
-        typst_math = " " + typst_math + " " if display_math else typst_math
-        output = convert_typst_to_mathjax(typst_math)
-    else:
-        output = svg_to_base64_img(generate_typst_svg(typst_math), display_math)
+    typst_math = " " + typst_math + " " if display_math and render_type == Export.MATHJAX else typst_math
+    output = (convert_typst_to_mathjax(typst_math) 
+              if render_type == Export.MATHJAX 
+              else svg_to_base64_img(generate_typst_svg(typst_math), display_math))
 
     return output
 
 def convert_typst_to_mathjax(typst_math: str) -> str:
     """Returns MathJax markup by calling a pandoc process with `typst_math` as input."""
-    mathjax_output = pypandoc.convert_text(f"{PREAMBLE}\n${typst_math}$", "html", "typst", extra_args=["--mathjax"])
+    mathjax_output = pypandoc.convert_text(f"{preamble}\n${typst_math}$", "html", "typst", extra_args=["--mathjax"])
     return re.sub("<\/?p>", "", mathjax_output)
 
 def generate_typst_svg(typst_math: str) -> bytes:
     """Returns a sequence of bytes representing an SVG string obtained from compiling `typst_math` to SVG."""
 
     # Pre-amble for inline typst math.
-    final_code = PREAMBLE + "\n" + f"$ {typst_math} $" 
+    final_code = preamble + "\n" + f"$ {typst_math} $" 
     
     # Create temp file for typst code.
     with tempfile.NamedTemporaryFile(mode = "w", suffix = ".typ") as tmp:
@@ -129,23 +134,17 @@ def typst_editor(editor: Editor, display_math=False):
 
         editor.web.eval(js_insert_html)
 
-# TODO: preamble settings.
-def settings_cb(_editor: Editor):
-    preamble_settings = QDialog()
+def settings_cb():
+    """Callback for opening the "Edit preamble" dialog."""
 
-    preamble_settings.resize(500, 500)
-    preamble_settings.setWindowTitle("Edit preamble...")
+    preamble_settings = PreambleEditDialog(preamble=preamble)
+    full_preamble_path = Path(os.path.join(os.path.dirname(__file__), config["preamble"]))
 
-    preamble_input = QTextEdit()
-    preamble_input.setFont(QFontDatabase.systemFont(QFontDatabase.SystemFont.FixedFont))
-    preamble_input.setPlaceholderText(PREAMBLE)
-
-    layout = QVBoxLayout()
-    layout.addWidget(preamble_input)
-    layout.addWidget(QPushButton("Save"))
-
-    preamble_settings.setLayout(layout)
-    preamble_settings.exec()
+    if preamble_settings.exec():
+        input = preamble_settings.input.toPlainText()
+        with open(full_preamble_path, "w") as f:
+            f.write(input)
+            f.flush()
 
 def typst_menu_cb(editor: Editor):
     """Callback for the context menu of the dedicated "typst" button.
@@ -165,7 +164,7 @@ def typst_menu_cb(editor: Editor):
         ("Typst Math block", "Ctrl+M, B", partial(typst_editor, editor, True)),
         ("Typst Math replace", "Ctrl+M, R", partial(collect_and_replace, editor)),
         ("---", None, None),
-        ("Edit preamble...", QKeySequence(), partial(settings_cb, editor))
+        ("Edit preamble...", QKeySequence(), settings_cb)
     ]
 
     for action, shortcut, cmd in menu_and_action:
