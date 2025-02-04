@@ -11,3 +11,6 @@ wheels/
 *.zip
 lib/
 .DS_Store
+.ruff_cache
+
+meta.json

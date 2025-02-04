@@ -1,5 +1,5 @@
-PREAMBLE = """#set page(width: auto, height: auto, margin: 0cm, fill: none)
-#set text(white, 14pt)
+#set page(width: auto, height: auto, margin: 0cm, fill: none)
+#set text(white, 16pt)
 
 #let vbr(x) = $bold(upright(#x))$
 
@@ -28,4 +28,4 @@ PREAMBLE = """#set page(width: auto, height: auto, margin: 0cm, fill: none)
 #let ww = $vbr(w)$
 #let xx = $vbr(x)$
 #let yy = $vbr(y)$
-#let zz = $vbr(z)$"""
+#let zz = $vbr(z)$

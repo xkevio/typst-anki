@@ -1,10 +1,10 @@
-set windows-shell := ["powershell.exe"]
+set windows-shell := ["pwsh.exe", "-NoLogo", "-Command"] # Set to powershell v7.
 
 install:
-    mkdir -p src/typst_anki/lib
-    pip install typst -t src/typst_anki/lib/
-    pip install pypandoc -t src/typst_anki/lib/
-    cd src/typst_anki && zip -r typst_anki.zip ./*
+    mkdir -p src/typst-anki/lib
+    pip install typst -t src/typst-anki/lib/
+    pip install pypandoc -t src/typst-anki/lib/
+    cd src/typst-anki && zip -r typst-anki.zip ./*
 
 package:
-    cd src/typst_anki && zip -r typst_anki.zip ./*
+    cd src/typst-anki && zip -r typst-anki.zip ./*
