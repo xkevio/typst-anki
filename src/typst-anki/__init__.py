@@ -129,8 +129,23 @@ def typst_editor(editor: Editor, display_math=False):
 
         editor.web.eval(js_insert_html)
 
-def settings_cb(editor: Editor):
-    pass
+# TODO: preamble settings.
+def settings_cb(_editor: Editor):
+    preamble_settings = QDialog()
+
+    preamble_settings.resize(500, 500)
+    preamble_settings.setWindowTitle("Edit preamble...")
+
+    preamble_input = QTextEdit()
+    preamble_input.setFont(QFontDatabase.systemFont(QFontDatabase.SystemFont.FixedFont))
+    preamble_input.setPlaceholderText(PREAMBLE)
+
+    layout = QVBoxLayout()
+    layout.addWidget(preamble_input)
+    layout.addWidget(QPushButton("Save"))
+
+    preamble_settings.setLayout(layout)
+    preamble_settings.exec()
 
 def typst_menu_cb(editor: Editor):
     """Callback for the context menu of the dedicated "typst" button.
