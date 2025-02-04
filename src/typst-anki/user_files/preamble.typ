@@ -1,5 +1,5 @@
 #set page(width: auto, height: auto, margin: 0cm, fill: none)
-#set text(white, 12pt)
+#set text(white, 16pt)
 
 #let vbr(x) = $bold(upright(#x))$
 
