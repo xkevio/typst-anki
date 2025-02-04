@@ -1,9 +1,11 @@
 from typing import Any, cast
+from aqt import mw
 from aqt.qt import *
 from aqt.editor import Editor
 from aqt.gui_hooks import editor_did_init_buttons, webview_did_receive_js_message, editor_did_init_shortcuts
 from aqt.utils import showInfo
 from sys import platform
+from enum import Enum
 from functools import partial
 
 import re
@@ -27,8 +29,25 @@ if platform == "darwin":
 import typst
 import pypandoc
 
+config = mw.addonManager.getConfig(__name__)
+
 
 # ----- Conversion utility: Typst -> MathJax, Typst -> SVG, SVG -> Base64. ----- #
+
+class Export(Enum):
+    MATHJAX = 1
+    SVG = 2
+
+def generate_typst(typst_math: str, render_type: Export, display_math: bool) -> str:
+    output = ""
+
+    if render_type == Export.MATHJAX:
+        typst_math = " " + typst_math + " " if display_math else typst_math
+        output = convert_typst_to_mathjax(typst_math)
+    else:
+        output = svg_to_base64_img(generate_typst_svg(typst_math), display_math)
+
+    return output
 
 def convert_typst_to_mathjax(typst_math: str) -> str:
     """Returns MathJax markup by calling a pandoc process with `typst_math` as input."""
@@ -47,10 +66,12 @@ def generate_typst_svg(typst_math: str) -> bytes:
         tmp.flush()
         return typst.compile(tmp.name, format = "svg")
     
-def svg_to_base64_img(svg: bytes) -> str:
+def svg_to_base64_img(svg: bytes, display_math=False) -> str:
     """Returns an HTML img tag with the `svg` byte sequence encoded as base64 as the source."""
     svg_b64 = "data:image/svg+xml;base64," + base64.b64encode(svg).decode()
-    return f'<img style="vertical-align: middle;" src="{svg_b64}">'
+    return (f'<img style="vertical-align: middle;" src="{svg_b64}">' 
+            if not display_math 
+            else f'<img style="display: block; margin-left: auto; margin-right: auto;" src="{svg_b64}">')
 
 
 # ----- Replace functionality, editor input and callback definition for the context menu. ----- #
@@ -66,10 +87,12 @@ def collect_and_replace(editor: Editor):
     field_names = [f["name"] for f in fields]
     current_field = field_names[editor.currentField]
 
-    # TODO: check config for render-type and whether its block or inline math (for center-aligning the SVG)!
+    export = Export.MATHJAX if config["render-type"] == "mathjax" else Export.SVG
+    display_math = lambda x: x.startswith(" ") and x.endswith(" ")
+
     new_note_text = re.sub(
         "\$(.*?)\$", 
-        lambda match: convert_typst_to_mathjax(match.group(1)), 
+        lambda match: generate_typst(match.group(1), export, display_math(match.group(1))), 
         editor.note[current_field]
     )
 
@@ -94,18 +117,20 @@ def typst_editor(editor: Editor, display_math=False):
         input_text, option = input_dialog.text_and_option()
 
         # Convert SVG to base64 and enclose in <img> tag for vertical alignment and easier cursor movement.
-        svg_string = svg_to_base64_img(generate_typst_svg(input_text))
-        output_text = svg_string if option.startswith("Typst SVG") else convert_typst_to_mathjax(input_text)
+        output_text = generate_typst(input_text, Export.SVG if option.startswith("Typst SVG") else Export.MATHJAX, display_math)
 
         # see: https://github.com/ijgnd/anki__editor_add_table/commit/f236029d43ae8f65fa93a684ba13ea1bdfe64852.
         js_insert_html = (f"document.execCommand('insertHTML', false, {json.dumps(output_text)});"
                           if anki_point_version <= 49
                           else f"""
                             setTimeout(() => {{ document.execCommand('insertHTML', false, {json.dumps(output_text)}); }}, 20);
-                            { 'setTimeout(() => pycmd("reload_note"), 40);' if option != "Typst SVG" else "" }
+                            { 'setTimeout(() => pycmd("reload_note"), 40);' if not option.startswith("Typst SVG") else "" }
                             """)
 
         editor.web.eval(js_insert_html)
+
+def settings_cb(editor: Editor):
+    pass
 
 def typst_menu_cb(editor: Editor):
     """Callback for the context menu of the dedicated "typst" button.
@@ -125,7 +150,7 @@ def typst_menu_cb(editor: Editor):
         ("Typst Math block", "Ctrl+M, B", partial(typst_editor, editor, True)),
         ("Typst Math replace", "Ctrl+M, R", partial(collect_and_replace, editor)),
         ("---", None, None),
-        ("Edit preamble...", QKeySequence(), None)
+        ("Edit preamble...", QKeySequence(), partial(settings_cb, editor))
     ]
 
     for action, shortcut, cmd in menu_and_action:
