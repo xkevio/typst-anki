@@ -2,7 +2,7 @@
 
 Convert `typst` math code to `MathJax` (via pandoc) or `SVG`s (via the typst compiler) for use in Anki flashcards. Click either the `Typst math inline` button or press <kbd>Ctrl + M, T</kbd> for the inline math editor (<kbd>Ctrl+M, B</kbd> for the math block editor). 
 
-Alternatively, click `Typst math replace` or press <kbd>Ctrl + M, R</kbd> to replace all instances of typst math code between `$...$` with rendered `MathJax`. Add custom functions inside [`preamble.typ`](src/typst-anki/user_files/preamble.typ)—make sure to change your text color according to your system theme!
+Alternatively, click `Typst math replace` or press <kbd>Ctrl + M, R</kbd> to replace all instances of typst math code between `$...$` with rendered equations. Add custom functions inside [`preamble.typ`](src/typst-anki/user_files/preamble.typ)—make sure to change your text color according to your system theme!
 
 <p align="center">
     <img src="images/image-2.png", width=30%>
