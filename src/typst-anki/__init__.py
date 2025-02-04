@@ -47,7 +47,7 @@ def generate_typst(typst_math: str, render_type: Export, display_math: bool) -> 
     Calls either the MathJax conversion or the SVG compilation depending on `render_type`.
     """
 
-    typst_math = " " + typst_math + " " if display_math and render_type == Export.MATHJAX else typst_math
+    typst_math = " " + typst_math + " " if display_math and render_type == Export.MATHJAX else typst_math.strip()
     output = (convert_typst_to_mathjax(typst_math) 
               if render_type == Export.MATHJAX 
               else svg_to_base64_img(generate_typst_svg(typst_math), display_math))
