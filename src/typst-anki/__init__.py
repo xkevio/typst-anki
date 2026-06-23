@@ -18,9 +18,9 @@ from aqt.gui_hooks import (
 )
 from aqt.utils import showInfo
 
-from anki_version_detection import anki_point_version
-from preamble_edit_dialog import PreambleEditDialog
-from typst_input_dialog import TypstInputDialog
+from .anki_version_detection import anki_point_version
+from .preamble_edit_dialog import PreambleEditDialog
+from .typst_input_dialog import TypstInputDialog
 
 addon_path = os.path.dirname(__file__)
 sys.path.append(os.path.join(addon_path, "lib"))
@@ -83,7 +83,7 @@ def svg_to_base64_img(svg: bytes, display_math=False) -> str:
 
 
 def collect_and_replace(editor: Editor):
-    """Collects all text between dollar signs and converts it to MathML in-place."""
+    """Collects all text between dollar signs and converts it to MathML or SVG in-place."""
 
     if editor.currentField is None:
         showInfo("Select a text field!")
@@ -161,7 +161,7 @@ def settings_cb():
 
 
 def typst_menu_cb(editor: Editor):
-    """Callback for the context menu of the dedicated "typst" button.
+    """Callback for the context menu of the dedicated "Typst" button.
 
     Shows a menu similar to the native "Equations" menu with the following items:
     - Typst Math inline (opens the editor and uses inline math),
@@ -189,19 +189,17 @@ def typst_menu_cb(editor: Editor):
             act.setShortcutVisibleInContextMenu(True)
             act.setShortcut(shortcut)
 
-            if not cmd is None:
+            if cmd is not None:
                 act.triggered.connect(cmd)
 
             menu.addAction(act)
 
-    pos = QCursor.pos()
-    menu.exec(pos)
-
+    menu.exec(menu.actions(), QCursor.pos())
 
 # ----- Registration of GUI hooks for proper note reloading, shortcuts and buttons. ----- #
 
 
-def reload_note(handled: tuple[bool, Any], cmd: str, ctx: Any) -> tuple[bool, Any]:
+def reload_note_hook(handled: tuple[bool, Any], cmd: str, ctx: Any) -> tuple[bool, Any]:
     """Reload note callback for saving unsaved edits and loading note via `pycmd()`."""
 
     if cmd != "reload_note" or not isinstance(ctx, Editor):
@@ -213,7 +211,7 @@ def reload_note(handled: tuple[bool, Any], cmd: str, ctx: Any) -> tuple[bool, An
     return (True, None)
 
 
-def init_shortcuts(keys: list[tuple], editor: Editor):
+def shortcut_hook(keys: list[tuple], editor: Editor):
     """Initialize and add shortcuts to global shortcut hook."""
 
     keys.extend(
@@ -225,8 +223,8 @@ def init_shortcuts(keys: list[tuple], editor: Editor):
     )
 
 
-def add_typst_button(buttons, editor: Editor):
-    """Appends the `typst` button opening a context menu with all the options."""
+def typst_button_hook(buttons, editor: Editor):
+    """Appends the `Typst` button opening a context menu with all the options."""
 
     typst_menu = editor.addButton(
         icon=None,
@@ -239,6 +237,6 @@ def add_typst_button(buttons, editor: Editor):
     buttons.append(typst_menu)
 
 
-editor_did_init_buttons.append(add_typst_button)
-webview_did_receive_js_message.append(reload_note)
-editor_did_init_shortcuts.append(init_shortcuts)
+editor_did_init_buttons.append(typst_button_hook)
+webview_did_receive_js_message.append(reload_note_hook)
+editor_did_init_shortcuts.append(shortcut_hook)

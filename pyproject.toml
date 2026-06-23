@@ -12,6 +12,3 @@ dependencies = [
 
 [tool.ty.environment]
 root = ["./src/typst-anki"]
-
-[tool.uv]
-package = true

@@ -6,7 +6,7 @@ from aqt import (
     QRadioButton,
     QTextEdit,
     QVBoxLayout,
-    mw,
+    mw, Qt,
 )
 
 
