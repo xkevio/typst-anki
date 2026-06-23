@@ -1,4 +1,4 @@
 {
-    "render-type": "mathjax",
+    "render-type": "mathml",
     "preamble": "user_files/preamble.typ"
 }

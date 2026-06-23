@@ -1,5 +1,6 @@
 from aqt.qt import *
 
+
 class PreambleEditDialog(QDialog):
     def __init__(self, parent=None, preamble: str = None):
         QDialog.__init__(self, parent)

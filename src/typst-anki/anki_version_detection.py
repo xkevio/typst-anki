@@ -9,11 +9,13 @@ def get_anki_version():
         except:
             # <= 2.1.19
             from anki import version as anki_version
-            out = int(anki_version.split(".")[-1]) 
+
+            out = int(anki_version.split(".")[-1])
         else:
             out = pointVersion()
     else:
         out = point_version()
     return out
-    
+
+
 anki_point_version = get_anki_version()
