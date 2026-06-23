@@ -569,7 +569,7 @@ wheels = [
 [[package]]
 name = "typst-anki"
 version = "1.0.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "aqt" },
     { name = "pyqt6" },

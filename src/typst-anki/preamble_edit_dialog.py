@@ -1,8 +1,8 @@
-from aqt.qt import *
+from aqt import QDialog, QFontDatabase, QPushButton, QTextEdit, QVBoxLayout
 
 
 class PreambleEditDialog(QDialog):
-    def __init__(self, parent=None, preamble: str = None):
+    def __init__(self, parent=None, preamble: str = ""):
         QDialog.__init__(self, parent)
 
         self.resize(500, 500)

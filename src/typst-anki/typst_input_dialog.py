@@ -1,5 +1,13 @@
-from aqt import mw
-from aqt.qt import *
+from aqt import (
+    QDialog,
+    QHBoxLayout,
+    QLineEdit,
+    QPushButton,
+    QRadioButton,
+    QTextEdit,
+    QVBoxLayout,
+    mw,
+)
 
 
 class TypstInputDialog(QDialog):

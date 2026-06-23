@@ -9,3 +9,9 @@ dependencies = [
     "pyqt6>=6.8.0",
     "typst>=0.15.0",
 ]
+
+[tool.ty.environment]
+root = ["./src/typst-anki"]
+
+[tool.uv]
+package = true

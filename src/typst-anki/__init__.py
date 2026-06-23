@@ -1,28 +1,26 @@
-from typing import Any, cast
-from aqt import mw
-from aqt.qt import *
-from aqt.editor import Editor
-from aqt.gui_hooks import (
-    editor_did_init_buttons,
-    webview_did_receive_js_message,
-    editor_did_init_shortcuts,
-)
-from aqt.utils import showInfo
-
+import base64
+import json
+import os
+import re
+import sys
+import tempfile
 from enum import Enum
 from functools import partial
 from pathlib import Path
+from typing import Any, cast
 
-import re
-import sys
-import os
-import tempfile
-import json
-import base64
+from aqt import QAction, QCursor, QKeySequence, QMenu, mw
+from aqt.editor import Editor
+from aqt.gui_hooks import (
+    editor_did_init_buttons,
+    editor_did_init_shortcuts,
+    webview_did_receive_js_message,
+)
+from aqt.utils import showInfo
 
-from .anki_version_detection import anki_point_version
-from .typst_input_dialog import TypstInputDialog
-from .preamble_edit_dialog import PreambleEditDialog
+from anki_version_detection import anki_point_version
+from preamble_edit_dialog import PreambleEditDialog
+from typst_input_dialog import TypstInputDialog
 
 addon_path = os.path.dirname(__file__)
 sys.path.append(os.path.join(addon_path, "lib"))
@@ -47,7 +45,7 @@ def gen_typst_math(typst_math: str, render_type: Export, display_math: bool) -> 
     Calls either the MathML export or the SVG compilation depending on `render_type`.
     """
 
-    # Pre-amble for inline typst math.
+    # Pre-amble for inline typst math (TODO: handle display math better!).
     typst_math = (
         " " + typst_math + " "
         if display_math and render_type == Export.MATHML
