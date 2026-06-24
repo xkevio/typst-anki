@@ -7,14 +7,12 @@ import tempfile
 from enum import Enum
 from functools import partial
 from pathlib import Path
-from typing import Any, cast
 
 from aqt import QAction, QCursor, QKeySequence, QMenu, mw
 from aqt.editor import Editor
 from aqt.gui_hooks import (
     editor_did_init_buttons,
     editor_did_init_shortcuts,
-    webview_did_receive_js_message,
 )
 from aqt.utils import showInfo
 
@@ -27,7 +25,10 @@ sys.path.append(os.path.join(addon_path, "lib"))
 
 import typst
 
-config = mw.addonManager.getConfig(__name__)
+config = mw.addonManager.getConfig(__name__) or {
+    "render-type": "mathml",
+    "preamble": "user_files/preamble.typ"
+}
 preamble = Path(os.path.join(os.path.dirname(__file__), config["preamble"])).read_text()
 
 
@@ -85,21 +86,20 @@ def svg_to_base64_img(svg: bytes, display_math=False) -> str:
 def collect_and_replace(editor: Editor):
     """Collects all text between dollar signs and converts it to MathML or SVG in-place."""
 
-    if editor.currentField is None:
-        showInfo("Select a text field!")
+    if editor.currentField is None or editor.note is None:
+        showInfo("Select a text field or note!")
         return
 
     fields = editor.note.col.models.current()["flds"]
     field_names = [f["name"] for f in fields]
     current_field = field_names[editor.currentField]
 
-    export = Export.MATHML if config["render-type"] == "mathml" else Export.SVG
-    display_math = lambda x: x.startswith(" ") and x.endswith(" ")
-
     new_note_text = re.sub(
         "\$(.*?)\$",
         lambda match: gen_typst_math(
-            match.group(1), export, display_math(match.group(1))
+            match.group(1),
+            Export[config["render-type"].upper()],
+            match.group(1).startswith(" ") and match.group(1).endswith(" "),
         ),
         editor.note[current_field],
     )
@@ -109,15 +109,19 @@ def collect_and_replace(editor: Editor):
 
 
 def typst_editor(editor: Editor, display_math=False):
-    """Open an input dialog for typst input, convert and append to note.
+    """Open an input dialog for Typst input, convert and append to note.
 
     - If the option checkbox is set to MathML, Typst's MathML export is used.
-    - If the option checkbox is set to SVG, the typst compiler is called directly and exports as SVG.
+    - If the option checkbox is set to SVG, Typst's SVG export is used.
 
-    Calls `evalWithCallback` to append MathML/SVG with `insertHTML` via Javascript.
+    Calls `EditorWebView::eval` to append MathML/SVG with `insertHTML` via Javascript.
     """
 
-    input_dialog = TypstInputDialog(display_math=display_math)
+    if editor.web is None:
+        showInfo("Web view of editor could not be initialized!")
+        return
+
+    input_dialog = TypstInputDialog(display_math=display_math, config = config)
     input_dialog.input.setFocus()
     input_dialog.button.setDefault(True)
 
@@ -125,7 +129,7 @@ def typst_editor(editor: Editor, display_math=False):
     if input_dialog.exec():
         input_text, option = input_dialog.text_and_option()
 
-        # Convert SVG to base64 and enclose in <img> tag for vertical alignment and easier cursor movement.
+        # Generate Typst math code either as base64-encoded SVG in an <img> tag or as MathML.
         output_text = gen_typst_math(
             input_text,
             Export.SVG if option.startswith("Typst SVG") else Export.MATHML,
@@ -136,10 +140,7 @@ def typst_editor(editor: Editor, display_math=False):
         js_insert_html = (
             f"document.execCommand('insertHTML', false, {json.dumps(output_text)});"
             if anki_point_version <= 49
-            else f"""
-                            setTimeout(() => {{ document.execCommand('insertHTML', false, {json.dumps(output_text)}); }}, 20);
-                            {'setTimeout(() => pycmd("reload_note"), 40);' if not option.startswith("Typst SVG") else ""}
-                            """
+            else f"setTimeout(() => {{ document.execCommand('insertHTML', false, {json.dumps(output_text)}); }}, 50);"
         )
 
         editor.web.eval(js_insert_html)
@@ -196,19 +197,8 @@ def typst_menu_cb(editor: Editor):
 
     menu.exec(menu.actions(), QCursor.pos())
 
-# ----- Registration of GUI hooks for proper note reloading, shortcuts and buttons. ----- #
 
-
-def reload_note_hook(handled: tuple[bool, Any], cmd: str, ctx: Any) -> tuple[bool, Any]:
-    """Reload note callback for saving unsaved edits and loading note via `pycmd()`."""
-
-    if cmd != "reload_note" or not isinstance(ctx, Editor):
-        return handled
-
-    editor = cast(Editor, ctx)
-    editor.saveNow(editor.loadNoteKeepingFocus)
-
-    return (True, None)
+# ----- Registration of GUI hooks for shortcuts and buttons. ----- #
 
 
 def shortcut_hook(keys: list[tuple], editor: Editor):
@@ -238,5 +228,4 @@ def typst_button_hook(buttons, editor: Editor):
 
 
 editor_did_init_buttons.append(typst_button_hook)
-webview_did_receive_js_message.append(reload_note_hook)
 editor_did_init_shortcuts.append(shortcut_hook)

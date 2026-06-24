@@ -6,15 +6,13 @@ from aqt import (
     QRadioButton,
     QTextEdit,
     QVBoxLayout,
-    mw, Qt,
+    Qt,
 )
 
 
 class TypstInputDialog(QDialog):
-    def __init__(self, parent=None, display_math=False):
+    def __init__(self, parent=None, display_math=False, config={}):
         QDialog.__init__(self, parent)
-
-        config = mw.addonManager.getConfig(__name__)
 
         # --- Window configuration based on inline/display math. --- #
 
@@ -29,9 +27,7 @@ class TypstInputDialog(QDialog):
         self.setWindowTitle(window_title)
         self.resize(window_size[0], window_size[1])
 
-        self.display_math = display_math
         self.input = window_editor
-
         self.button = QPushButton("Convert")
         self.button.setAutoDefault(False)
         self.button.clicked.connect(self.accept)
@@ -71,8 +67,11 @@ class TypstInputDialog(QDialog):
         """Returns a tuple of strings containing the text input and the chosen radio button option name."""
 
         input_text = (
-            self.input.text() if not self.display_math else self.input.toPlainText()
+            self.input.text()
+            if isinstance(self.input, QLineEdit)
+            else self.input.toPlainText()
         )
+
         selected_option = [
             r.text() for r in self.radio_group.values() if r.isChecked()
         ][0]

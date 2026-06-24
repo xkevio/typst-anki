@@ -24,6 +24,7 @@ zip -r typst-anki.zip ./*
 Then, open Anki > Tools > Addons > Install from file > `typst_anki.zip`.
 Or, if you wish, use [`just`](https://github.com/casey/just).
 
-## TODO
+## Features
 
-- [x] **Feature:** Use Typst HTML export when it releases (MathML).
+- [x] Use Typst HTML export to utilize MathML (since Typst v0.15.0).
+- [x] Use Typst SVG export to ensure same visual look everywhere.
