@@ -27,7 +27,7 @@ import typst
 
 config = mw.addonManager.getConfig(__name__) or {
     "render-type": "mathml",
-    "preamble": "user_files/preamble.typ"
+    "preamble": "user_files/preamble.typ",
 }
 preamble = Path(os.path.join(os.path.dirname(__file__), config["preamble"])).read_text()
 
@@ -121,7 +121,7 @@ def typst_editor(editor: Editor, display_math=False):
         showInfo("Web view of editor could not be initialized!")
         return
 
-    input_dialog = TypstInputDialog(display_math=display_math, config = config)
+    input_dialog = TypstInputDialog(display_math=display_math, config=config)
     input_dialog.input.setFocus()
     input_dialog.button.setDefault(True)
 
