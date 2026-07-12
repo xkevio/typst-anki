@@ -1,8 +1,8 @@
 # Typst Math for Anki
 
-### `"render-type"`: `"mathjax"` (default) or `"svg"`
+### `"render-type"`: `"mathml"` (default) or `"svg"`
   
-- Whether this add-on should export to MathJax via pandoc or invoke the typst compiler and generate an SVG image. Affects the default selection for the editor modal and the replacing functionality.
+- Whether this add-on should export to MathML via Typst or invoke the Typst compiler to generate an SVG image. Affects the default selection for the editor modal and the replacing functionality.
 
 ### `"preamble"`: `"user_files/preamble.typ"` (default)
 

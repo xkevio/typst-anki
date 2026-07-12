@@ -1,4 +1,7 @@
 {
+  "name": "Typst Math in Anki",
   "package": "typst-anki",
-  "name": "Typst Math in Anki"
+  "version": "1.0.0",
+  "author": "xkevio",
+  "description": "Typst Math via MathML or SVG in Anki."
 }
