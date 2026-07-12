@@ -10,6 +10,9 @@ Alternatively, click `Typst math replace` or press <kbd>Ctrl + M, R</kbd> to rep
     <img src="images/image-3.png", width=30%>
 </p>
 
+> [!NOTE]
+> When using MathML, toggle the HTML editor twice (by pressing <kbd>Ctrl + Shift + X</kbd>) to move the cursor out of the inserted math equation.
+
 ## Installation
 
 ```sh

@@ -64,7 +64,7 @@ def gen_typst_math(typst_math: str, render_type: Export, display_math: bool) -> 
         )
 
         return (
-            output.decode()
+            output.decode().replace("<p>", "").replace("</p>", "")
             if render_type == Export.MATHML
             else svg_to_base64_img(output, display_math)
         )
